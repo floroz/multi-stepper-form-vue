@@ -1,5 +1,5 @@
 <script setup lang="ts"></script>
 
-<template>Hello World</template>
+<template><h1 class="text-9xl">Hello World</h1></template>
 
 <style scoped></style>
