@@ -24,7 +24,7 @@ function onPreviousClick() {
 </script>
 
 <template>
-  <div class="bg-white min-h-1/2 min-w-1/2 shadow-xl rounded-md">
+  <div class="bg-white min-w-1/2 max-w-44 h-1/2 shadow-xl rounded-md">
     <MultiFormStepper :max-steps="maxSteps" :active-step="activeStep" />
     <Transition>
       <KeepAlive>

@@ -14,7 +14,7 @@ const steps = computed<number[]>(() =>
 </script>
 
 <template>
-  <div class="w-full flex p-6 gap-x-4 items-center justify-center">
+  <div class="w-full flex p-8 gap-x-4 items-center justify-center">
     <template v-for="step in steps">
       <div
         class="rounded-full min-w-8 min-h-8 bg-gray-200 flex justify-center items-center"

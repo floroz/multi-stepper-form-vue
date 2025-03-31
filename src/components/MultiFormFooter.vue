@@ -23,6 +23,7 @@ const isLast = computed(() => activeStep == maxSteps);
         'opacity-0': activeStep === 1,
         'pointer-events-none': activeStep === 1,
       }"
+      :tabindex="activeStep === 1 ? -1 : 0"
     >
       {{ previousButtonText }}
     </button>
