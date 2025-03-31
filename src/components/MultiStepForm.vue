@@ -7,6 +7,27 @@ import { ref } from "vue";
 const maxSteps: number = 4;
 const activeStep = ref(1);
 
+const fullName = defineModel("full-name", {
+  default: "",
+  required: true,
+  type: String,
+});
+const email = defineModel("email", {
+  default: "",
+  required: true,
+  type: String,
+});
+const phone = defineModel("phone", {
+  default: "",
+  required: true,
+  type: String,
+});
+const portfolio = defineModel("portfolio", {
+  default: "",
+  required: true,
+  type: String,
+});
+
 function onNextStep() {
   if (activeStep.value === maxSteps) {
     return;
@@ -28,7 +49,13 @@ function onPreviousClick() {
     <MultiFormStepper :max-steps="maxSteps" :active-step="activeStep" />
     <Transition>
       <KeepAlive>
-        <MultiFormPersonalInfo v-if="activeStep === 1" />
+        <MultiFormPersonalInfo
+          v-model:full-name="fullName"
+          v-model:email="email"
+          v-model:phone="phone"
+          v-model:portfolio="portfolio"
+          v-if="activeStep === 1"
+        />
       </KeepAlive>
     </Transition>
     <MultiFormFooter

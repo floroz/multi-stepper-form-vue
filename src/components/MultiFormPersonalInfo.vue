@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const fullName = defineModel("full-name", { required: true });
+const email = defineModel("email", { required: true });
+const phone = defineModel("phone", { required: true });
+const portfolio = defineModel("portfolio", { required: true });
+</script>
 
 <template>
   <section class="border-y-1 border-gray-200 p-8">
@@ -14,6 +19,7 @@
           placeholder="Rishi Purwar"
           type="text"
           class="rounded-md border-1 border-gray-200 p-2 text-black"
+          v-model="fullName"
         />
       </div>
       <div class="flex flex-col">
@@ -22,6 +28,7 @@
           placeholder="name@email.com"
           type="text"
           class="rounded-md border-1 border-gray-200 p-2 text-black"
+          v-model="email"
         />
       </div>
       <div class="flex flex-col">
@@ -30,6 +37,7 @@
           placeholder="+91 1234567890"
           type="text"
           class="rounded-md border-1 border-gray-200 p-2 text-black"
+          v-model="phone"
         />
       </div>
       <div class="flex flex-col">
@@ -38,6 +46,7 @@
           placeholder="github.com/rishipurwal"
           type="text"
           class="rounded-md border-1 border-gray-200 p-2 text-black"
+          v-model="portfolio"
         />
       </div>
     </div>
