@@ -3,17 +3,23 @@ import MultiFormStepper from "./MultiFormStepper.vue";
 import MultiFormPersonalInfo from "./MultiFormPersonalInfo.vue";
 import MultiFormSkillLevel from "./MultiFormSkillLevel.vue";
 import MultiFormSummary from "./MultiFormSummary.vue";
-import { ref, computed } from "vue"; // Ensure computed is imported
-import { useForm } from "vee-validate"; // Import useForm
-import * as yup from "yup"; // Import yup
+import { ref, computed } from "vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
 import MultiFormTechChoice from "./MultiFormTechChoice.vue";
-import { JSFramework, SkillLevel } from "./types"; // Import enums
+import { JSFramework, SkillLevel } from "./types";
 
-// Define Yup validation schema
 const schema = yup.object({
   fullName: yup.string().required().label("Full Name"),
   email: yup.string().required().email().label("Email Address"),
-  phone: yup.string().required().label("Phone Number"), // Consider adding numeric/format validation
+  phone: yup
+    .string()
+    .required()
+    .matches(
+      /^[0-9+()\-\s]+$/,
+      "Phone number must contain only digits and allowed characters (+, -, (, ), space)"
+    )
+    .label("Phone Number"),
   portfolio: yup.string().required().url().label("Portfolio Link"),
   skillLevel: yup
     .mixed<SkillLevel>()
@@ -29,19 +35,18 @@ const schema = yup.object({
 });
 
 const MAX_STEPS: number = 4;
-const activeStep = ref(3); // Start at step 1
+const activeStep = ref(1);
 
-// Initialize useForm
 const { values, handleSubmit, validate, errors } = useForm({
   validationSchema: schema,
-  keepValuesOnUnmount: true,
+  keepValuesOnUnmount: true, // Add this option to preserve state across steps
   initialValues: {
     fullName: "",
     email: "",
     phone: "",
     portfolio: "",
-    skillLevel: SkillLevel.Beginner, // Default value
-    frameworks: [] as JSFramework[], // Initialize as empty array
+    skillLevel: SkillLevel.Beginner,
+    frameworks: [] as JSFramework[],
   },
 });
 
@@ -55,12 +60,10 @@ async function onNextStep() {
   const { valid } = await validate();
 
   if (valid) {
+    console.log("validation failed"); // debug line
     // Check if validation passed
     activeStep.value++;
   }
-
-  // If validation fails, VeeValidate will typically display errors
-  // based on how <Field> and <ErrorMessage> are configured in child components.
 }
 
 function onPreviousStep() {

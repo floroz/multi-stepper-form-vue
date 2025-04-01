@@ -1,13 +1,8 @@
 <script setup lang="ts">
-// Removed SignupFormData import as we now receive values directly from vee-validate
-import { JSFramework, SkillLevel } from "./types"; // Keep these if needed for display logic
-
 defineProps<{
-  // Accept the form values object from vee-validate
-  formValues: Record<string, any>; // Use Record<string, any> or Object
+  formValues: Record<string, any>;
 }>();
 
-// Adjust mapKeyToTitle to accept string and handle potential keys
 const mapKeyToTitle = (k: string): string => {
   // Define the mapping based on field names used in vee-validate Fields
   const dict: Record<string, string> = {
@@ -16,7 +11,7 @@ const mapKeyToTitle = (k: string): string => {
     phone: "Phone Number",
     portfolio: "Portfolio/GitHub Link",
     skillLevel: "Skill Level",
-    framework: "Challenge Preference", // Assuming 'framework' is the name used in MultiFormTechChoice
+    frameworks: "Technology Choices",
   };
 
   return dict[k] || k; // Return the mapped title or the key itself if not found
@@ -30,7 +25,7 @@ const mapKeyToTitle = (k: string): string => {
       Please review your information to make sure everything is accurate
     </p>
 
-    <div class="grid grid-cols-3 gap-8">
+    <div class="grid grid-cols-3 gap-4">
       <!-- Iterate over the formValues prop -->
       <div
         class="flex flex-col bg-gray-200 rounded-lg p-4 text-sm"
@@ -38,7 +33,14 @@ const mapKeyToTitle = (k: string): string => {
         :key="k"
       >
         <p>{{ mapKeyToTitle(k) }}</p>
-        <p class="font-bold">{{ v ?? "Not provided" }}</p>
+        <p class="font-bold text-xs">
+          <template v-if="k === 'frameworks' && Array.isArray(v)">
+            {{ v.length > 0 ? v.join(", ") : "None selected" }}
+          </template>
+          <template v-else>
+            {{ v ?? "Not provided" }}
+          </template>
+        </p>
       </div>
     </div>
   </section>
