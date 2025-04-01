@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MultiStepForm from "./components/MultiStepForm.vue";
+import MultiStepForm from "./components/MultiStepForm/MultiStepForm.vue";
 </script>
 
 <template>
