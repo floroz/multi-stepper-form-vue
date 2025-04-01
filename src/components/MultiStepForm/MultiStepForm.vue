@@ -2,13 +2,37 @@
 import MultiFormStepper from "./MultiFormStepper.vue";
 import MultiFormFooter from "./MultiFormFooter.vue";
 import MultiFormPersonalInfo from "./MultiFormPersonalInfo.vue";
-import { useMultiStep } from "./useMultiStep";
 import { reactive } from "vue";
 import { JSFramework, SkillLevel, type SignupFormData } from "./types";
 import MultiFormSkillLevel from "./MultiFormSkillLevel.vue";
 import MultiFormSummary from "./MultiFormSummary.vue";
+import { ref } from "vue";
 
-const { activeStep, maxSteps } = useMultiStep();
+const maxSteps: number = 4;
+const activeStep = ref(1);
+const errors = ref([]);
+
+function onNextStep() {
+  if (activeStep.value === maxSteps) {
+    onSubmit();
+    return;
+  } else {
+    //TODO: validate step
+    activeStep.value++;
+  }
+}
+function onPreviousStep() {
+  if (activeStep.value === 1) {
+    return;
+  } else {
+    activeStep.value--;
+  }
+}
+
+function onSubmit() {
+  // fake API request to server with formData
+}
+
 const formData = reactive<SignupFormData>({
   fullName: "",
   email: "",
@@ -20,7 +44,8 @@ const formData = reactive<SignupFormData>({
 </script>
 
 <template>
-  <div
+  <form
+    novalidate
     class="bg-white shadow-xl min-w-1/2 max-w-[37rem] h-1/2 max-h-[37rem] rounded-md grid grid-rows-[6rem_1fr_6rem]"
   >
     <MultiFormStepper :max-steps="maxSteps" :active-step="activeStep" />
@@ -44,8 +69,13 @@ const formData = reactive<SignupFormData>({
       </KeepAlive>
     </TransitionGroup>
     <MultiFormFooter
+      @on-next="onNextStep"
+      @on-previous="onPreviousStep"
+      :max-steps="maxSteps"
+      :active-step="activeStep"
       previous-button-text="Go Back"
       :next-button-text="activeStep === maxSteps ? 'Submit' : 'Next Step'"
+      :disabled="activeStep === maxSteps || errors.length > 0"
     />
-  </div>
+  </form>
 </template>
