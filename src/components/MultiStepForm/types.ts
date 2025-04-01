@@ -1,11 +1,3 @@
-export type SignupFormData = {
-  fullName: string;
-  email: string;
-  phone: string;
-  portfolio: string;
-  framework: JSFramework;
-  skillLevel: SkillLevel;
-};
 export enum JSFramework {
   React = "react",
   Vue = "vue",

@@ -1,8 +1,13 @@
 <script setup lang="ts">
-const fullName = defineModel("full-name", { required: true });
-const email = defineModel("email", { required: true });
-const phone = defineModel("phone", { required: true });
-const portfolio = defineModel("portfolio", { required: true });
+import { useField } from "vee-validate";
+
+// Use useField for each input, getting value and errorMessage
+const { value: fullName, errorMessage: fullNameError } =
+  useField<string>("fullName");
+const { value: email, errorMessage: emailError } = useField<string>("email");
+const { value: phone, errorMessage: phoneError } = useField<string>("phone");
+const { value: portfolio, errorMessage: portfolioError } =
+  useField<string>("portfolio");
 </script>
 
 <template>
@@ -14,40 +19,64 @@ const portfolio = defineModel("portfolio", { required: true });
 
     <div class="grid grid-cols-2 grid-rows-1 gap-8">
       <div class="flex flex-col">
-        <label for="" class="text-xs font-bold">Full Name</label>
+        <label for="fullName" class="text-xs font-bold">Full Name</label>
         <input
+          id="fullName"
+          name="fullName"
+          v-model="fullName"
           placeholder="Rishi Purwar"
           type="text"
           class="rounded-md border-1 border-gray-200 p-2 text-black"
-          v-model="fullName"
+          :class="{ 'border-red-500': !!fullNameError }"
         />
+        <span v-if="fullNameError" class="text-red-500 text-xs mt-1">{{
+          fullNameError
+        }}</span>
       </div>
       <div class="flex flex-col">
-        <label for="" class="text-xs font-bold">Email</label>
+        <label for="email" class="text-xs font-bold">Email</label>
         <input
+          id="email"
+          name="email"
+          v-model="email"
           placeholder="name@email.com"
           type="text"
           class="rounded-md border-1 border-gray-200 p-2 text-black"
-          v-model="email"
+          :class="{ 'border-red-500': !!emailError }"
         />
+        <span v-if="emailError" class="text-red-500 text-xs mt-1">{{
+          emailError
+        }}</span>
       </div>
       <div class="flex flex-col">
-        <label for="" class="text-xs font-bold">Phone</label>
+        <label for="phone" class="text-xs font-bold">Phone</label>
         <input
+          id="phone"
+          name="phone"
+          v-model="phone"
           placeholder="+91 1234567890"
           type="text"
           class="rounded-md border-1 border-gray-200 p-2 text-black"
-          v-model="phone"
+          :class="{ 'border-red-500': !!phoneError }"
         />
+        <span v-if="phoneError" class="text-red-500 text-xs mt-1">{{
+          phoneError
+        }}</span>
       </div>
       <div class="flex flex-col">
-        <label for="" class="text-xs font-bold">Portfolio</label>
+        <label for="portfolio" class="text-xs font-bold">Portfolio</label>
         <input
+          id="portfolio"
+          name="portfolio"
+          v-model="portfolio"
           placeholder="github.com/rishipurwal"
           type="text"
           class="rounded-md border-1 border-gray-200 p-2 text-black"
-          v-model="portfolio"
+          :class="{ 'border-red-500': !!portfolioError }"
         />
+        <span v-if="portfolioError" class="text-red-500 text-xs mt-1">{{
+          portfolioError
+        }}</span>
       </div>
     </div>
   </section>
