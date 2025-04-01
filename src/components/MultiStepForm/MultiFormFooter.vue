@@ -1,36 +1,37 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { useMultiStep } from "./useMultiStep";
 
-const { activeStep, maxSteps } = defineProps<{
+defineProps<{
   nextButtonText: string;
   previousButtonText: string;
-  activeStep: number;
-  maxSteps: number;
-}>();
-defineEmits<{
-  previousClick: [];
-  nextClick: [];
 }>();
 
-const isLast = computed(() => activeStep == maxSteps);
+const {
+  activeStep,
+  maxSteps,
+  onNextStep,
+  onPreviousStep,
+  isLastStep,
+  isFirstStep,
+} = useMultiStep();
 </script>
 <template>
   <footer class="w-full flex items-center justify-between p-8">
     <button
       class="rounded-lg py-2 px-4 border-2 border-orange-500 text-orange-500 text-sm cursor-pointer"
-      @click="$emit('previousClick')"
+      @click="onPreviousStep"
       :class="{
-        'opacity-0': activeStep === 1,
-        'pointer-events-none': activeStep === 1,
+        'opacity-0': isFirstStep,
+        'pointer-events-none': isFirstStep,
       }"
-      :tabindex="activeStep === 1 ? -1 : 0"
+      :tabindex="isFirstStep ? -1 : 0"
     >
       {{ previousButtonText }}
     </button>
     <button
       class="rounded-lg py-2 px-4 bg-orange-500 text-white text-sm cursor-pointer"
-      @click="$emit('nextClick')"
-      :class="{ 'opacity-50': isLast }"
+      @click="onNextStep"
+      :class="{ 'opacity-50': isLastStep }"
       :disabled="activeStep === maxSteps"
     >
       {{ nextButtonText }}

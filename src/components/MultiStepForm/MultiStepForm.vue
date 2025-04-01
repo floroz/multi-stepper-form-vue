@@ -1,70 +1,51 @@
 <script setup lang="ts">
-import MultiFormFooter from "./MultiFormFooter.vue";
 import MultiFormStepper from "./MultiFormStepper.vue";
+import MultiFormFooter from "./MultiFormFooter.vue";
 import MultiFormPersonalInfo from "./MultiFormPersonalInfo.vue";
-import { ref } from "vue";
+import { useMultiStep } from "./useMultiStep";
+import { reactive } from "vue";
+import { JSFramework, SkillLevel, type SignupFormData } from "./types";
+import MultiFormSkillLevel from "./MultiFormSkillLevel.vue";
+import MultiFormSummary from "./MultiFormSummary.vue";
 
-const maxSteps: number = 4;
-const activeStep = ref(1);
-
-const fullName = defineModel("full-name", {
-  default: "",
-  required: true,
-  type: String,
+const { activeStep, maxSteps } = useMultiStep();
+const formData = reactive<SignupFormData>({
+  fullName: "",
+  email: "",
+  phone: "",
+  portfolio: "",
+  skillLevel: SkillLevel.Beginner,
+  framework: JSFramework.React,
 });
-const email = defineModel("email", {
-  default: "",
-  required: true,
-  type: String,
-});
-const phone = defineModel("phone", {
-  default: "",
-  required: true,
-  type: String,
-});
-const portfolio = defineModel("portfolio", {
-  default: "",
-  required: true,
-  type: String,
-});
-
-function onNextStep() {
-  if (activeStep.value === maxSteps) {
-    return;
-  } else {
-    activeStep.value++;
-  }
-}
-function onPreviousClick() {
-  if (activeStep.value === 1) {
-    return;
-  } else {
-    activeStep.value--;
-  }
-}
 </script>
 
 <template>
-  <div class="bg-white min-w-1/2 max-w-44 h-1/2 shadow-xl rounded-md">
+  <div
+    class="bg-white shadow-xl min-w-1/2 max-w-[37rem] h-1/2 max-h-[37rem] rounded-md grid grid-rows-[6rem_1fr_6rem]"
+  >
     <MultiFormStepper :max-steps="maxSteps" :active-step="activeStep" />
-    <Transition>
+    <TransitionGroup>
       <KeepAlive>
         <MultiFormPersonalInfo
-          v-model:full-name="fullName"
-          v-model:email="email"
-          v-model:phone="phone"
-          v-model:portfolio="portfolio"
+          v-model:full-name="formData.fullName"
+          v-model:email="formData.email"
+          v-model:phone="formData.phone"
+          v-model:portfolio="formData.portfolio"
           v-if="activeStep === 1"
         />
+        <MultiFormSkillLevel
+          v-model="formData.skillLevel"
+          v-else-if="activeStep === 2"
+        />
+        <MultiFormSummary
+          :form-data="formData"
+          v-else-if="activeStep === maxSteps"
+        />
       </KeepAlive>
-    </Transition>
+    </TransitionGroup>
     <MultiFormFooter
-      :max-steps="maxSteps"
-      :active-step="activeStep"
       previous-button-text="Go Back"
-      next-button-text="Next Step"
-      @next-click="onNextStep"
-      @previous-click="onPreviousClick"
+      :next-button-text="activeStep === maxSteps ? 'Submit' : 'Next Step'"
     />
   </div>
 </template>
