@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
 
-// Use useField for each input, getting value and errorMessage
 const { value: fullName, errorMessage: fullNameError } =
   useField<string>("fullName");
 const { value: email, errorMessage: emailError } = useField<string>("email");

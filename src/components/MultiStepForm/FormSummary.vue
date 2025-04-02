@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import type { SignupFormData } from "./types";
+
 defineProps<{
-  formValues: Record<string, any>;
+  formValues: SignupFormData;
 }>();
 
-const mapKeyToTitle = (k: string): string => {
-  // Define the mapping based on field names used in vee-validate Fields
-  const dict: Record<string, string> = {
+const mapKeyToTitle = (k: keyof SignupFormData): string => {
+  const dict: Record<keyof SignupFormData, string> = {
     email: "Email Address",
     fullName: "Full Name",
     phone: "Phone Number",
@@ -14,7 +15,7 @@ const mapKeyToTitle = (k: string): string => {
     frameworks: "Technology Choices",
   };
 
-  return dict[k] || k; // Return the mapped title or the key itself if not found
+  return dict[k];
 };
 </script>
 
@@ -26,7 +27,6 @@ const mapKeyToTitle = (k: string): string => {
     </p>
 
     <div class="grid grid-cols-3 gap-4">
-      <!-- Iterate over the formValues prop -->
       <div
         class="flex flex-col bg-gray-200 rounded-lg p-4 text-sm"
         v-for="(v, k) in formValues"

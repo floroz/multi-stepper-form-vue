@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import MultiFormStepper from "./MultiFormStepper.vue";
-import MultiFormPersonalInfo from "./MultiFormPersonalInfo.vue";
-import MultiFormSkillLevel from "./MultiFormSkillLevel.vue";
-import MultiFormSummary from "./MultiFormSummary.vue";
+import Stepper from "./Stepper.vue";
+import PersonalInfo from "./PersonalInfo.vue";
+import SelectSkillLevel from "./SelectSkillLevel.vue";
+import FormSummary from "./FormSummary.vue";
 import { ref, computed } from "vue";
 import { useForm } from "vee-validate";
-import MultiFormTechChoice from "./MultiFormTechChoice.vue";
+import TechChoice from "./TechChoice.vue";
 import { JSFramework, SkillLevel, type SignupFormData } from "./types";
 import * as yup from "yup";
 import { nextTick } from "vue";
@@ -134,13 +134,13 @@ const onSubmit = handleSubmit((formValues) => {
     @submit.prevent="onSubmit"
     class="bg-white shadow-xl min-w-1/2 max-w-[37rem] h-1/2 max-h-[37rem] rounded-md grid grid-rows-[6rem_1fr_6rem]"
   >
-    <MultiFormStepper :max-steps="MAX_STEPS" :active-step="activeStep" />
+    <Stepper :max-steps="MAX_STEPS" :active-step="activeStep" />
     <TransitionGroup>
       <KeepAlive :key="activeStep">
-        <MultiFormPersonalInfo v-if="activeStep === 1" />
-        <MultiFormSkillLevel v-else-if="activeStep === 2" />
-        <MultiFormTechChoice v-else-if="activeStep === 3" />
-        <MultiFormSummary :form-values="values" v-else-if="isLastStep" />
+        <PersonalInfo v-if="activeStep === 1" />
+        <SelectSkillLevel v-else-if="activeStep === 2" />
+        <TechChoice v-else-if="activeStep === 3" />
+        <FormSummary :form-values="values" v-else-if="isLastStep" />
       </KeepAlive>
     </TransitionGroup>
     <footer class="w-full flex items-center justify-between p-8">
