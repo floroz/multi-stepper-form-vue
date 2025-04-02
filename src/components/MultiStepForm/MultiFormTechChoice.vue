@@ -34,10 +34,10 @@ const frameworkOptions = Object.values(JSFramework);
       >
         <input
           type="checkbox"
-          :id="'framework-' + framework"
+          :id="'field-frameworks-' + framework"
           :value="framework"
           v-model="frameworks"
-          class="mr-3 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+          class="mr-3 h-4 w-4 rounded border-gray-300 text-orange-600 focus-visible:ring-orange-500"
           :class="{ 'border-red-500': !!frameworksError }"
         />
         <label

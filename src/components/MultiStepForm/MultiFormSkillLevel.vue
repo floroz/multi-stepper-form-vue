@@ -18,6 +18,7 @@ const {
     <div class="grid grid-cols-2 grid-rows-1 gap-8">
       <div class="flex flex-col">
         <button
+          id="field-skillLevel"
           type="button"
           class="border-2 border-gray-200 py-4 px-8 rounded-lg font-bold text-sm"
           :class="{

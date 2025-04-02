@@ -11,3 +11,12 @@ export enum SkillLevel {
   Advanced = "advanced",
   Expert = "expert",
 }
+
+export type SignupFormData = {
+  fullName: string;
+  email: string;
+  phone: string;
+  skillLevel: SkillLevel;
+  frameworks: JSFramework[];
+  portfolio: string;
+};

@@ -5,9 +5,12 @@ import MultiFormSkillLevel from "./MultiFormSkillLevel.vue";
 import MultiFormSummary from "./MultiFormSummary.vue";
 import { ref, computed } from "vue";
 import { useForm } from "vee-validate";
-import * as yup from "yup";
 import MultiFormTechChoice from "./MultiFormTechChoice.vue";
-import { JSFramework, SkillLevel } from "./types";
+import { JSFramework, SkillLevel, type SignupFormData } from "./types";
+import * as yup from "yup";
+import { nextTick } from "vue";
+
+const MAX_STEPS: number = 4;
 
 const schema = yup.object({
   fullName: yup.string().required().label("Full Name"),
@@ -29,15 +32,22 @@ const schema = yup.object({
   frameworks: yup
     .array()
     .of(yup.mixed<JSFramework>().oneOf(Object.values(JSFramework)))
-    .min(1, "Choose at least one option") // Use Yup's min for array length
+    .min(1, "Choose at least one option")
     .required() // Required ensures it's an array, min(1) ensures not empty
     .label("Technology Choice"),
 });
 
-const MAX_STEPS: number = 4;
-const activeStep = ref(1);
+const fieldsByStep: Record<number, Partial<keyof SignupFormData>[]> = {
+  1: ["fullName", "email", "phone", "portfolio"],
+  2: ["skillLevel"],
+  3: ["frameworks"],
+};
 
-const { values, handleSubmit, validate, errors } = useForm({
+const activeStep = ref(1);
+const isFirstStep = computed(() => activeStep.value === 1);
+const isLastStep = computed(() => activeStep.value === MAX_STEPS);
+
+const { values, handleSubmit, validateField, errors } = useForm({
   validationSchema: schema,
   keepValuesOnUnmount: true, // Add this option to preserve state across steps
   initialValues: {
@@ -50,19 +60,59 @@ const { values, handleSubmit, validate, errors } = useForm({
   },
 });
 
-async function onNextStep() {
+async function onNextStep(event: MouseEvent) {
   if (activeStep.value === MAX_STEPS) {
+    // if we are at the last step, we let the `type="submit"` to trigger the form.
+    return;
+  }
+  // The button is "Next"  - prevent submit behaviour.
+  event.preventDefault();
+
+  // For each step of the form, we want to only validate
+  // the fields that are displayed in the current step.
+  const currentFields = fieldsByStep[activeStep.value];
+  if (!currentFields) {
+    // Should not happen, but good practice
+    activeStep.value++;
     return;
   }
 
-  // Validate all fields up to the current step (or just current if needed)
-  // For simplicity, let's validate all. Adjust if step-specific validation is required.
-  const { valid } = await validate();
+  // Validate all fields for the current step
+  const validationPromises = currentFields.map((field) => validateField(field));
+  const results = await Promise.all(validationPromises);
 
-  if (valid) {
-    console.log("validation failed"); // debug line
-    // Check if validation passed
+  // Check if any validation failed
+  const isValid = results.every((result) => result.valid);
+
+  if (isValid) {
     activeStep.value++;
+  } else {
+    await focusFirstErroredField(currentFields);
+  }
+}
+
+async function focusFirstErroredField(
+  currentFields: Partial<keyof SignupFormData>[]
+) {
+  console.log(`Validation failed for step ${activeStep.value}`);
+  // Find the first field in the current step that has an error
+  const firstInvalidField = currentFields.find((field) => errors.value[field]);
+
+  if (firstInvalidField) {
+    // Construct the selector. Use the field name directly for step 1,
+    // and the specific IDs we added for steps 2 and 3.
+    let selector = `#${firstInvalidField}`; // Default for step 1 inputs
+    if (activeStep.value === 2) {
+      selector = `#field-skillLevel`; // ID added to the first button
+    } else if (activeStep.value === 3) {
+      // TODO: this currently doesn't work because we are targeting the native HTML input checkbox - we need to create the proxy element and style it.
+      selector = `#field-frameworks-react`; // ID added to the checkbox container
+    }
+
+    // Use nextTick to ensure the DOM is updated before trying to focus
+    await nextTick();
+    const elementToFocus = document.querySelector<HTMLElement>(selector);
+    elementToFocus?.focus();
   }
 }
 
@@ -74,28 +124,9 @@ function onPreviousStep() {
   }
 }
 
-async function handleNextOrSubmit(event: MouseEvent) {
-  if (activeStep.value !== MAX_STEPS) {
-    // It's the "Next Step" button
-    event.preventDefault(); // Prevent default browser action (important!)
-    await onNextStep(); // Validate and potentially move to the next step
-  }
-  // If it IS the last step (activeStep === MAX_STEPS), this handler does nothing.
-  // The button's type="submit" will trigger the form's @submit event naturally.
-}
-
-// Define the function to run on successful submission
 const onSubmit = handleSubmit((formValues) => {
-  // formValues contains the validated data
-  alert("Submit!");
-  // fake API request to server with formValues
   console.log("Form Submitted:", formValues);
 });
-
-const isFirstStep = computed(() => activeStep.value === 1);
-
-// Expose errors for potential use in template (optional)
-// const errorBag = errors;
 </script>
 
 <template>
@@ -109,10 +140,7 @@ const isFirstStep = computed(() => activeStep.value === 1);
         <MultiFormPersonalInfo v-if="activeStep === 1" />
         <MultiFormSkillLevel v-else-if="activeStep === 2" />
         <MultiFormTechChoice v-else-if="activeStep === 3" />
-        <MultiFormSummary
-          :form-values="values"
-          v-else-if="activeStep === MAX_STEPS"
-        />
+        <MultiFormSummary :form-values="values" v-else-if="isLastStep" />
       </KeepAlive>
     </TransitionGroup>
     <footer class="w-full flex items-center justify-between p-8">
@@ -129,14 +157,13 @@ const isFirstStep = computed(() => activeStep.value === 1);
         Go Back
       </button>
       <button
-        :type="activeStep === MAX_STEPS ? 'submit' : 'button'"
+        :type="isLastStep ? 'submit' : 'button'"
         class="rounded-lg py-2 px-4 bg-orange-500 text-white text-sm cursor-pointer"
-        @click="handleNextOrSubmit"
+        @click="onNextStep"
         :class="{ 'opacity-50': false }"
       >
-        {{ activeStep === MAX_STEPS ? "Submit" : "Next Step" }}
+        {{ isLastStep ? "Submit" : "Next Step" }}
       </button>
     </footer>
   </form>
-  <pre>{{ values }}</pre>
 </template>
