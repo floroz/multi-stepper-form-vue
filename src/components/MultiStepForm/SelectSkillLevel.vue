@@ -55,7 +55,7 @@ const { handleKeydown } = useArrowNavigation(containerRef, itemRefs, {
           role="radio"
           :aria-checked="skillLevel === level"
           :ref="(el) => setItemRef(el as HTMLElement | null, index)"
-          class="border-2 border-gray-200 py-4 px-8 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          class="border-2 border-gray-200 py-4 px-8 rounded-lg font-bold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
           :class="{
             'border-orange-500 bg-orange-50 text-orange-700':
               skillLevel === level,

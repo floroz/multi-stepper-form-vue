@@ -62,7 +62,7 @@ const toggleFramework = (framework: JSFramework) => {
         role="checkbox"
         :aria-checked="frameworks?.includes(framework)"
         :tabindex="index === 0 ? 0 : -1"
-        class="border-2 border-gray-200 py-4 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 cursor-pointer flex items-center"
+        class="border-2 border-gray-200 py-4 px-8 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 cursor-pointer flex items-center"
         :class="{
           'border-orange-500 bg-orange-50': frameworks?.includes(framework),
         }"
