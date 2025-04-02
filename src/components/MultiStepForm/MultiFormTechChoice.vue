@@ -30,21 +30,34 @@ const frameworkOptions = Object.values(JSFramework);
       <div
         v-for="framework in frameworkOptions"
         :key="framework"
-        class="flex items-center border-2 border-gray-200 py-4 px-8 rounded-lg cursor-pointer"
+        class="border-2 border-gray-200 py-4 px-8 rounded-lg"
       >
-        <input
-          type="checkbox"
-          :id="'field-frameworks-' + framework"
-          :value="framework"
-          v-model="frameworks"
-          class="mr-3 h-4 w-4 rounded border-gray-300 text-orange-600 focus-visible:ring-orange-500"
-          :class="{ 'border-red-500': !!frameworksError }"
-        />
         <label
-          :for="'framework-' + framework"
-          class="font-bold text-sm select-none"
+          :for="'field-frameworks-' + framework"
+          class="flex items-center cursor-pointer"
         >
-          {{ getFrameworkDisplayName(framework) }}
+          <input
+            type="checkbox"
+            :id="'field-frameworks-' + framework"
+            :value="framework"
+            v-model="frameworks"
+            class="peer absolute opacity-0 h-0 w-0"
+          />
+          <!-- Custom Checkbox -->
+          <span
+            aria-hidden="true"
+            class="relative flex items-center h-5 w-5 shrink-0 border border-gray-300 rounded mr-3 peer-checked:bg-orange-500 peer-checked:border-orange-500 peer-focus-visible:ring-2 peer-focus-visible:ring-orange-500 peer-focus-visible:ring-offset-2 peer-checked:[&_span]:block"
+            :class="{ 'border-red-500': !!frameworksError }"
+          >
+            <!-- Checkmark (initially hidden) -->
+            <span
+              class="absolute hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[0.35rem] h-[0.65rem] border-solid border-white border-r-[2px] border-b-[2px] rotate-45"
+            ></span>
+          </span>
+          <!-- Label Text -->
+          <span class="font-bold text-sm select-none">
+            {{ getFrameworkDisplayName(framework) }}
+          </span>
         </label>
       </div>
     </div>
