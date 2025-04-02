@@ -3,6 +3,7 @@ import { useField } from "vee-validate";
 import { SkillLevel } from "./types";
 import { ref, onBeforeUpdate, computed } from "vue";
 import { useArrowNavigation } from "../../composables/useArrowNavigation";
+import { capitalize } from "./helpers";
 
 const {
   value: skillLevel,
@@ -25,13 +26,9 @@ onBeforeUpdate(() => {
 });
 
 const { handleKeydown } = useArrowNavigation(containerRef, itemRefs, {
-  columns: 2, // 2 columns in the grid
-  loop: true, // Allow looping
+  columns: 2,
+  loop: true,
 });
-
-function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.substring(1);
-}
 </script>
 
 <template>

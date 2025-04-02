@@ -1,22 +1,10 @@
 <script setup lang="ts">
+import { mapFormKeyToTitle } from "./helpers";
 import type { SignupFormData } from "./types";
 
 defineProps<{
   formValues: SignupFormData;
 }>();
-
-const mapKeyToTitle = (k: keyof SignupFormData): string => {
-  const dict: Record<keyof SignupFormData, string> = {
-    email: "Email Address",
-    fullName: "Full Name",
-    phone: "Phone Number",
-    portfolio: "Portfolio/GitHub Link",
-    skillLevel: "Skill Level",
-    frameworks: "Technology Choices",
-  };
-
-  return dict[k];
-};
 </script>
 
 <template>
@@ -32,7 +20,7 @@ const mapKeyToTitle = (k: keyof SignupFormData): string => {
         v-for="(v, k) in formValues"
         :key="k"
       >
-        <p>{{ mapKeyToTitle(k) }}</p>
+        <p>{{ mapFormKeyToTitle(k) }}</p>
         <p class="font-bold text-xs">
           <template v-if="k === 'frameworks' && Array.isArray(v)">
             {{ v.length > 0 ? v.join(", ") : "None selected" }}

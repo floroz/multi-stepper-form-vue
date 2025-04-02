@@ -3,20 +3,10 @@ import { useField } from "vee-validate";
 import { JSFramework } from "./types";
 import { ref, onBeforeUpdate } from "vue";
 import { useArrowNavigation } from "../../composables/useArrowNavigation";
+import { getFrameworkDisplayName } from "./helpers.ts";
 
 const { value: frameworks, errorMessage: frameworksError } =
   useField<JSFramework[]>("frameworks");
-
-// Helper to get framework display names
-const getFrameworkDisplayName = (framework: JSFramework): string => {
-  const names: Record<JSFramework, string> = {
-    [JSFramework.React]: "React",
-    [JSFramework.Vue]: "Vue",
-    [JSFramework.Angular]: "Angular",
-    [JSFramework.HTMLCSS]: "HTML/CSS",
-  };
-  return names[framework] || framework;
-};
 
 const frameworkOptions = Object.values(JSFramework);
 
