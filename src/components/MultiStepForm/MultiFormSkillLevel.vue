@@ -1,13 +1,37 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
 import { SkillLevel } from "./types";
+import { ref, onBeforeUpdate, computed } from "vue";
+import { useArrowNavigation } from "../../composables/useArrowNavigation";
 
-// Use useField for skillLevel
 const {
   value: skillLevel,
   errorMessage: skillLevelError,
   setValue: setSkillLevel,
 } = useField<SkillLevel | undefined>("skillLevel");
+
+const containerRef = ref<HTMLElement | null>(null);
+const itemRefs = ref<(HTMLElement | null)[]>([]);
+const skillLevelOptions = computed(() => Object.values(SkillLevel)); // Array to loop over
+
+const setItemRef = (el: HTMLElement | null, index: number) => {
+  if (el) {
+    itemRefs.value[index] = el;
+  }
+};
+
+onBeforeUpdate(() => {
+  itemRefs.value = [];
+});
+
+const { handleKeydown } = useArrowNavigation(containerRef, itemRefs, {
+  columns: 2, // 2 columns in the grid
+  loop: true, // Allow looping
+});
+
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.substring(1);
+}
 </script>
 
 <template>
@@ -15,54 +39,35 @@ const {
     <h3 class="text-lg font-bold">Skill Level</h3>
     <p class="mb-4 text-sm">Please select your skill level</p>
 
-    <div class="grid grid-cols-2 grid-rows-1 gap-8">
-      <div class="flex flex-col">
+    <div
+      ref="containerRef"
+      role="radiogroup"
+      aria-labelledby="skill-level-heading"
+      class="grid grid-cols-2 grid-rows-2 gap-8"
+      @keydown="handleKeydown"
+    >
+      <h4 id="skill-level-heading" class="sr-only">Skill Level Options</h4>
+      <div
+        v-for="(level, index) in skillLevelOptions"
+        :key="level"
+        class="flex flex-col"
+      >
         <button
-          id="field-skillLevel"
+          :id="index === 0 ? 'field-skillLevel' : undefined"
           type="button"
-          class="border-2 border-gray-200 py-4 px-8 rounded-lg font-bold text-sm"
+          role="radio"
+          :aria-checked="skillLevel === level"
+          :ref="(el) => setItemRef(el as HTMLElement | null, index)"
+          class="border-2 border-gray-200 py-4 px-8 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
           :class="{
-            'border-orange-500': skillLevel === SkillLevel.Beginner,
+            'border-orange-500 bg-orange-50 text-orange-700':
+              skillLevel === level,
           }"
-          @click="setSkillLevel(SkillLevel.Beginner)"
+          @click="setSkillLevel(level)"
+          @keydown.space.prevent="setSkillLevel(level)"
+          @keydown.enter.prevent="setSkillLevel(level)"
         >
-          Beginner
-        </button>
-      </div>
-      <div class="flex flex-col">
-        <button
-          type="button"
-          class="border-2 border-gray-200 py-4 px-8 rounded-lg font-bold text-sm"
-          :class="{
-            'border-orange-500': skillLevel === SkillLevel.Intermediate,
-          }"
-          @click="setSkillLevel(SkillLevel.Intermediate)"
-        >
-          Intermediate
-        </button>
-      </div>
-      <div class="flex flex-col">
-        <button
-          type="button"
-          class="border-2 border-gray-200 py-4 px-8 rounded-lg font-bold text-sm"
-          :class="{
-            'border-orange-500': skillLevel === SkillLevel.Advanced,
-          }"
-          @click="setSkillLevel(SkillLevel.Advanced)"
-        >
-          Advanced
-        </button>
-      </div>
-      <div class="flex flex-col">
-        <button
-          type="button"
-          class="border-2 border-gray-200 py-4 px-8 rounded-lg font-bold text-sm"
-          :class="{
-            'border-orange-500': skillLevel === SkillLevel.Expert,
-          }"
-          @click="setSkillLevel(SkillLevel.Expert)"
-        >
-          Expert
+          {{ capitalize(level) }}
         </button>
       </div>
     </div>
